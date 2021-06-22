@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Sign In",
+                      "Login Dulu Gaes",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
