@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scm_app/providers/auth.dart';
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:provider/provider.dart';
 import 'package:scm_app/pages/homePage.dart';
+import 'package:scm_app/providers/auth.dart';
 import 'package:scm_app/utils/http_exception.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,33 +15,40 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  // Map<String, String> _authData = {'email': '', 'password': ''};
+  Map<String, String> _authData = {'email': '', 'password': ''};
 
-  // Future _submit() async {
-  //   if (!_formKey.currentState.validate()) {
-  //     //invalid
-  //     return;
-  //   }
-  //   _formKey.currentState.save();
-  //   try {
-  //     await Provider.of<Auth>(context, listen: false)
-  //         .login(_authData['email'], _authData['password']);
-  //   } on HttpException catch (e) {
-  //     var errorMessage = 'Authentication Failed';
-  //     if (e.toString().contains('INVALID_EMAIL')) {
-  //       errorMessage = 'Invalid email';
-  //       _showerrorDialog(errorMessage);
-  //     } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
-  //       errorMessage = 'This email not found';
-  //       _showerrorDialog(errorMessage);
-  //     } else if (e.toString().contains('INVALID_PASSWORD')) {
-  //       errorMessage = 'Invalid Password';
-  //       _showerrorDialog(errorMessage);
-  //     }
-  //   } catch (error) {
-  //     var errorMessage = 'Plaese try again later';
-  //     _showerrorDialog(errorMessage);
-  //   }
+  Future _submit() async {
+    if (!_formKey.currentState!.validate()) {
+      //invalid
+      return;
+    }
+    _formKey.currentState!.save();
+    try {
+      await Provider.of<Auth>(context, listen: false)
+          .login(
+              _authData['email'].toString(), _authData['password'].toString())
+          .then((_) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (ctx) => HomeScreen()));
+      });
+    } on HttpException catch (e) {
+      var errorMessage = 'Authentication Failed';
+      if (e.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'Invalid email';
+        _showerrorDialog(errorMessage);
+      } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'This email not found';
+        _showerrorDialog(errorMessage);
+      } else if (e.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid Password';
+        _showerrorDialog(errorMessage);
+      }
+    } catch (error) {
+      var errorMessage = 'Plaese try again later';
+      _showerrorDialog(errorMessage);
+    }
+  }
+
   // }
 
   @override
@@ -111,12 +120,12 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.white,
                                   )),
                               validator: (value) {
-                                // if (value.isEmpty || !value.contains('@')) {
-                                //   return 'Invalid email';
-                                // }
+                                if (value!.isEmpty || !value.contains('@')) {
+                                  return 'Invalid email';
+                                }
                               },
                               onSaved: (value) {
-                                // _authData['email'] = value;
+                                _authData['email'] = value!;
                               },
                             ),
                             SizedBox(
@@ -144,12 +153,12 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.white,
                                   )),
                               validator: (value) {
-                                // if (value.isEmpty || value.length < 5) {
-                                //   return 'Password is to Short';
-                                // }
+                                if (value!.isEmpty || value.length < 5) {
+                                  return 'Password is to Short';
+                                }
                               },
                               onSaved: (value) {
-                                // _authData['password'] = value;
+                                _authData['password'] = value!;
                               },
                             ),
                             Container(
@@ -157,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 140,
                               child: RaisedButton(
                                   onPressed: () {
-                                    // _submit();
+                                    _submit();
                                   },
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
